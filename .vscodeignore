@@ -1,0 +1,24 @@
+# Ignore development folders
+.vscode/
+src/
+tests/
+scripts/
+vsix/
+
+# Ignore lock files and configs not needed at runtime
+pnpm-lock.yaml
+package-lock.json
+tsconfig.json
+tslint.json
+.eslintrc
+*.log
+
+# Ignore git-related stuff
+.git/
+.gitignore
+
+# Ignore README and LICENSE if not needed in marketplace
+README.md
+readme.md
+vscode.md
+LICENSE.txt
