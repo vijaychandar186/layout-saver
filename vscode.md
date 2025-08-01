@@ -2,6 +2,8 @@
 
 This guide walks you through packaging and publishing your VS Code extension using `@vscode/vsce`.
 
+---
+
 ## Prerequisites
 
 1. **Node.js and npm** must be installed.
@@ -20,24 +22,32 @@ npm install -g @vscode/vsce
 
 ## Step 2: Package the Extension
 
-Make sure your extension has the following:
+Make sure your extension has the following files configured:
 
-* `package.json` with `name`, `displayName`, `description`, `version`, `publisher`, `engines.vscode`, and `categories`
-* `out/main.js` or compiled source
+* `package.json` with the following fields:
 
-Then package the extension:
+  * `name`
+  * `displayName`
+  * `description`
+  * `version`
+  * `publisher`
+  * `engines.vscode`
+  * `categories`
+* Compiled source code, e.g., `out/main.js`
+
+Then run:
 
 ```bash
 vsce package
 ```
 
-This will create a `.vsix` file:
+This will generate a `.vsix` file:
 
 ```
 layout-saver-1.0.0.vsix
 ```
 
-Example Output:
+### Example Output
 
 ```
 Files included in the VSIX:
@@ -45,11 +55,12 @@ layout-saver-1.0.0.vsix
 ├─ [Content_Types].xml
 ├─ extension.vsixmanifest
 └─ extension/
-   ├─ LICENSE.txt
-   ├─ package.json
+   ├─ LICENSE.txt [0.65 KB]
+   ├─ package.json [1.81 KB]
    ├─ readme.md
    └─ out/
-      └─ main.js
+      ├─ main.js [2.66 KB]
+      └─ main.js.map [6 KB]
 ```
 
 ---
@@ -62,9 +73,17 @@ layout-saver-1.0.0.vsix
 vsce create-publisher <publisher-name>
 ```
 
-You'll be prompted to sign in with a Microsoft account.
+This will prompt you to sign in with a Microsoft account and link it to the publisher.
+
+Alternatively, login using:
+
+```bash
+vsce login <publisher-name>
+```
 
 ### 3.2 Publish
+
+To publish the extension:
 
 ```bash
 vsce publish
@@ -76,7 +95,7 @@ To publish a specific version:
 vsce publish <version>
 ```
 
-To publish a `.vsix` manually:
+To publish a pre-packaged `.vsix` manually:
 
 ```bash
 vsce publish --packagePath layout-saver-1.0.0.vsix
@@ -86,19 +105,19 @@ vsce publish --packagePath layout-saver-1.0.0.vsix
 
 ## Updating Your Extension
 
-1. Bump version in `package.json`
+1. Update the `version` field in `package.json`
 2. Re-run:
 
-   ```bash
-   vsce package
-   vsce publish
-   ```
+```bash
+vsce package
+vsce publish
+```
 
 ---
 
 ## Test Locally
 
-Before publishing, test your `.vsix`:
+Before publishing, test the `.vsix` file locally:
 
 ```bash
 code --install-extension layout-saver-1.0.0.vsix

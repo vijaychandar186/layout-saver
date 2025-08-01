@@ -55,7 +55,12 @@ pnpm run watch          # Watch for changes and rebuild
 
 ### Debugging
 
-Launch the extension in a new Extension Host window using the included `launch.json` config.
+After running `pnpm run watch`, you can test the extension by either:
+
+* Pressing **F5** to launch a new Extension Host window, or
+* Clicking the **Run and Debug** icon from the Activity Bar and hitting the **Play** button.
+
+This opens a new VS Code window where the extension is loaded for testing.
 
 ---
 
