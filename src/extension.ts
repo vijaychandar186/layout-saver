@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 const EXT_ID = 'layoutSaver';
 const CMD_ID = 'layout';
@@ -27,7 +28,7 @@ async function saveLayout() {
         documents: tabs
             .sort((a, b) => a.group.viewColumn - b.group.viewColumn)
             .map(tab => ({
-                fsPath: tab.input.uri.fsPath,
+                relativePath: vscode.workspace.asRelativePath(tab.input.uri),
                 column: tab.group.viewColumn,
                 pinned: tab.isPinned
             }))
@@ -49,6 +50,9 @@ async function loadLayout() {
     const saved = config.get<any>('layout');
     if (!saved?.documents || !saved?.layout) return notify('No saved layout found', true);
 
+    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    if (!workspaceRoot) return notify('No workspace folder found', true);
+
     await closeEditors(true);
 
     if (config.get('hideSideBarAfterOpen')) {
@@ -58,16 +62,19 @@ async function loadLayout() {
 
     await run('vscode.setEditorLayout', saved.layout);
 
-    for (const { fsPath, column, pinned } of saved.documents) {
+    for (const { relativePath, column, pinned } of saved.documents) {
+        const absPath = path.join(workspaceRoot, relativePath);
+        const uri = vscode.Uri.file(absPath);
+
         try {
-            const doc = await vscode.workspace.openTextDocument(fsPath);
+            const doc = await vscode.workspace.openTextDocument(uri);
             await vscode.window.showTextDocument(doc, {
                 viewColumn: column,
                 preview: false
             });
             if (pinned) await run('workbench.action.pinEditor');
         } catch {
-            notify(`Cannot open file "${fsPath}"`, true);
+            notify(`Cannot open file "${relativePath}"`, true);
         }
     }
 }
@@ -80,7 +87,7 @@ function getValidTextTabs(): (vscode.Tab & { input: vscode.TabInputText })[] {
     return vscode.window.tabGroups.all
         .flatMap(group => group.tabs)
         .filter(isTextTab)
-        .filter(tab => tab.input.uri.scheme !== 'untitled');
+        .filter(tab => tab.input.uri.scheme === 'file'); // only save actual files
 }
 
 async function closeEditors(force = false) {
