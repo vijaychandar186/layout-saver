@@ -1,37 +1,119 @@
+# Publishing Your VS Code Extension
+
+This guide walks you through packaging and publishing your VS Code extension using `@vscode/vsce`.
+
+## Prerequisites
+
+1. **Node.js and npm** must be installed.
+2. You must have a **Microsoft account**.
+3. You must have a **Personal Access Token (PAT)** from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/manage).
+
+---
+
+## Step 1: Install `vsce`
+
+```bash
 npm install -g @vscode/vsce
+```
 
-@vijaychandar186 ➜ /workspaces/layout-saver (main) $ vsce package
-Executing prepublish script 'npm run vscode:prepublish'...
+---
 
-> layout-saver@1.0.0 vscode:prepublish
-> pnpm run esbuild-base --pure:console.log --minify
+## Step 2: Package the Extension
 
+Make sure your extension has the following:
 
-> layout-saver@1.0.0 esbuild-base /workspaces/layout-saver
-> esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node --pure:console.log --minify
+* `package.json` with `name`, `displayName`, `description`, `version`, `publisher`, `engines.vscode`, and `categories`
+* `out/main.js` or compiled source
 
+Then package the extension:
 
-  out/main.js  2.5kb
+```bash
+vsce package
+```
 
-⚡ Done in 6ms
- WARNING  Neither a .vscodeignore file nor a "files" property in package.json was found. To ensure only necessary files are included in your extension, add a .vscodeignore file or specify the "files" property in package.json. More info: https://aka.ms/vscode-vscodeignore
+This will create a `.vsix` file:
 
- INFO  Files included in the VSIX:
+```
 layout-saver-1.0.0.vsix
-├─ [Content_Types].xml 
-├─ extension.vsixmanifest 
-└─ extension/
-   ├─ .gitignore [2.1 KB]
-   ├─ LICENSE.txt [34.32 KB]
-   ├─ package.json [1.81 KB]
-   ├─ pnpm-lock.yaml [8.7 KB]
-   ├─ readme.md 
-   ├─ .vscode/
-   │  ├─ launch.json [0.41 KB]
-   │  └─ tasks.json [0.58 KB]
-   ├─ out/
-   │  └─ main.js [2.48 KB]
-   └─ src/
-      └─ extension.ts [3.29 KB]
+```
 
- DONE  Packaged: /workspaces/layout-saver/layout-saver-1.0.0.vsix (11 files, 22.16 KB)
+Example Output:
+
+```
+Files included in the VSIX:
+layout-saver-1.0.0.vsix
+├─ [Content_Types].xml
+├─ extension.vsixmanifest
+└─ extension/
+   ├─ LICENSE.txt
+   ├─ package.json
+   ├─ readme.md
+   └─ out/
+      └─ main.js
+```
+
+---
+
+## Step 3: Publish the Extension
+
+### 3.1 Create a Publisher (first time only)
+
+```bash
+vsce create-publisher <publisher-name>
+```
+
+You'll be prompted to sign in with a Microsoft account.
+
+### 3.2 Publish
+
+```bash
+vsce publish
+```
+
+To publish a specific version:
+
+```bash
+vsce publish <version>
+```
+
+To publish a `.vsix` manually:
+
+```bash
+vsce publish --packagePath layout-saver-1.0.0.vsix
+```
+
+---
+
+## Updating Your Extension
+
+1. Bump version in `package.json`
+2. Re-run:
+
+   ```bash
+   vsce package
+   vsce publish
+   ```
+
+---
+
+## Test Locally
+
+Before publishing, test your `.vsix`:
+
+```bash
+code --install-extension layout-saver-1.0.0.vsix
+```
+
+To uninstall:
+
+```bash
+code --uninstall-extension <publisher>.<extension-name>
+```
+
+---
+
+## Resources
+
+* [VS Code Extension Docs](https://code.visualstudio.com/api)
+* [VSCE CLI GitHub](https://github.com/microsoft/vsce)
+* [Marketplace Manage](https://marketplace.visualstudio.com/manage)
