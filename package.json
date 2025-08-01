@@ -1,0 +1,64 @@
+{
+  "name": "layout-saver",
+  "displayName": "Layout Saver",
+  "description": "Save and load a single editor layout in VS Code",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/main",
+  "contributes": {
+    "commands": [
+      {
+        "command": "layout.save",
+        "title": "Save Layout",
+        "category": "Layout Saver"
+      },
+      {
+        "command": "layout.load",
+        "title": "Load Layout",
+        "category": "Layout Saver"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "layout.load",
+        "key": "ctrl+alt+l",
+        "mac": "cmd+alt+l"
+      }
+    ],
+    "configuration": {
+      "title": "Layout Saver",
+      "type": "object",
+      "properties": {
+        "layoutSaver.layout": {
+          "type": "object",
+          "default": {},
+          "description": "The saved editor layout"
+        },
+        "layoutSaver.hideSideBarAfterOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Close sidebar after loading the layout"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run esbuild-base -- --pure:console.log --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "pnpm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node --sourcemap --watch",
+    "watch": "pnpm run esbuild-watch"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.5.4",
+    "esbuild": "^0.23.1"
+  }
+}
